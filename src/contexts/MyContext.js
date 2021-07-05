@@ -4,7 +4,7 @@ export const MyContext = createContext({});
 
 export function MyContextProvider({ children, ...props }) {
   return (
-    <MyContext.Provider value={}>
+    <MyContext.Provider>
       {children}
     </MyContext.Provider>
   );

@@ -1,9 +1,9 @@
 import { Container } from './styles';
 
-export function MyComponent() {
+export function Section({children, ...props}) {
   return (
     <Container>
-      <h1>MyComponent</h1>
+      {children}
     </Container>
   );
 };
