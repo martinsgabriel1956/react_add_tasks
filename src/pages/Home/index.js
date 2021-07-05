@@ -3,39 +3,24 @@ import { useEffect, useState } from 'react';
 import { NewTask } from '../../components/NewTask';
 import { Tasks } from '../../components/Tasks';
 
+import { useHTTP } from '../../hooks/useHTTP';
+
 export function Home() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [tasks, setTasks] = useState([]);
 
-  async function fetchTasks(taskText) {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(
-        'https://react-fetch-movies-2bc13-default-rtdb.firebaseio.com/tasks.json'
-      );
+  function transformTasks(tasksObj) {
+    const loadedTasks = [];
 
-      if (!res.ok) throw new Error('Request failed!');
+    for (const taskKey in tasksObj) loadedTasks.push({ id: taskKey, text: tasksObj[taskKey].text });
 
-      const data = await res.json();
+    setTasks(loadedTasks);
+  }
 
-      const loadedTasks = [];
-
-      for (const taskKey in data) {
-        loadedTasks.push({ id: taskKey, text: data[taskKey].text });
-      }
-
-      setTasks(loadedTasks);
-    } catch (err) {
-      setError(err.message || 'Something went wrong!');
-    }
-    setIsLoading(false);
-  };
+  const { isLoading, error, sendRequest: fetchTasks } = useHTTP({url: `https://react-fetch-movies-2bc13-default-rtdb.firebaseio.com/tasks.json`}, transformTasks);
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
   function handleTaskAdd (task) {
     setTasks((prevTasks) => prevTasks.concat(task));
